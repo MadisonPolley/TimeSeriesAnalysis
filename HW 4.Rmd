@@ -1,0 +1,82 @@
+---
+title: "HW 4"
+author: "Madi Polley"
+date: "10/26/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(TSA)
+```
+
+**3a**
+
+```{r}
+data("winnebago")
+
+plot(winnebago, type="o", ylab = "Winnebago Monthly Sales", main="Time Series of Monthly Unit Sales of RVs from Winnebago")
+```
+
+**The series is increasing with more variation as time increases. It appears that it may be exponential, so a log transformation may be appropriate to get more stationary values.**
+
+**3b**
+
+```{r}
+plot(log(winnebago), type = "o", ylab = "Log(Monthly Sales)", main = "Time Series of Log( Monthly Unit Sales of RVs from Winnebago)")
+```
+
+**There is still an increase in the series, but it appears more linear now with less variation.**
+
+**3c**
+
+```{r}
+percent = na.omit((winnebago - zlag(winnebago)) / zlag(winnebago))
+plot(x = diff(log(winnebago))[-1], y = percent[-1], ylab = "Percent Change", xlab = "Difference of Logs")
+
+cor(diff(log(winnebago))[-1], percent[-1])
+```
+
+**The plot is almost a straight line. This means there is likely strong correlation. The correlation coefficient is 0.9646886. This means that there is likely seasonality in the model that we have not considered.**
+
+**4a**
+
+```{r}
+data(gold)
+plot(gold, type = "o", ylab = "Daily Gold Prices", main = "Time Series of Daily Prices of Gold for the 252 Trading Days in 2005")
+```
+
+**The first half of the series has a seemingly constant price with some variation. The second half has a positive trend, possibly exponential.**
+
+**4b**
+
+```{r}
+plot(diff(log(gold)), type = "o", ylab = "Differences of Log(Prices)", main = "Time Series of Log( Daily Price of Gold for the 252 Trading Days in 2005)")
+```
+
+**The plot appears stationary, but the variability gets larger as time goes on.**
+
+**4c**
+
+```{r}
+acf(diff(log(gold)), main = "Simple ACF for the Differences of the Logs")
+```
+
+**The graph looks similar to the ACF for white noise. This means the log of gold prices may be a random walk model.**
+
+**4d**
+
+```{r}
+hist(diff(log(gold)))
+```
+
+**4e**
+
+```{r}
+qqnorm(diff(log(gold)))
+qqline(diff(log(gold)))
+
+shapiro.test(diff(log(gold)))
+```
+
+**The QQ plot isn't straight, which means that the distribution is not normal. The Shapito-Wilk test value of 0.015 also shows that it is not normal.**

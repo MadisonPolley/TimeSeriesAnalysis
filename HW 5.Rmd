@@ -1,0 +1,170 @@
+---
+title: "HW5 - 349"
+author: "Madi Polley"
+date: "10/26/2020"
+output:
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(TSA)
+```
+
+**question1**
+
+**A**
+
+**In Series A, the r1 is strongly positive because most neighbouring points are on the same side of the mean. Series B is strongly negative because neighbouring points are always on the opposite sides of the mean.**
+
+**B**
+
+**The r2 in Series A is positive because the points that are a couple apart are still mostly on the same side of the mean. In series B they are stronlgy positive as points that are two apart are always on the same side of the mean.**
+
+
+**Question 2**
+
+```{r}
+set.seed(11121998)
+
+series = arima.sim(n = 48, list(ar = 0.6))
+```
+
+**2a**
+```{r}
+
+lag1_q2 = 0.6
+print("lag1="); lag1_q2
+
+lag5_q2 = (0.6)^5
+print("lag5="); lag5_q2
+
+```
+
+**2b**
+
+```{r}
+acf(series,lag.max=5)[1:5]
+
+s.e_r1 = ((1-0.6^2)/48)^(0.5)
+s.e_r5 = (((1+0.6^2)/(1-0.6^2))/48)^(0.5)
+
+s.e_r1
+s.e_r5
+
+```
+
+
+
+**The estimates of 0.6 and 0.07776 in comparison to 0.509 and -0.058 are pretty close since they're only off by about 0.1. **
+
+**2c**
+
+```{r}
+set.seed(08251999)
+series = arima.sim(n = 48, list(ar = 0.6))
+acf(series,lag.max=5)[1:5]
+```
+
+**With a different number for set seed, the numbers change a little. I think the most notable difference is the 5th number.**
+
+**2d**
+```{r}
+set.seed(05141972); r1=rep(NA,10000); r5=r1 # We are doing 10,000 replications.
+for (k in 1:10000) 
+  {series=arima.sim(n=48, list(ar=0.6))
+  r1[k]=acf(series,lag.max = 1, plot = F)$acf[1]
+  r5[k]=acf(series,lag.max = 5, plot = F)$acf[5]}
+
+hist(r1)
+mean(r1)
+sd(r1)
+median(r1)
+hist(r5)
+mean(r5)
+sd(r5)
+median(r5)
+```
+
+**For r1 the mean is 0.5261639 with p1 = 0.6 and the median is 0.5369658. This shows the skewness in the lower values in r1's histogram. The sd of r1 is 0.1232218 which is close to 0.10. For r5 the mean is -0.01292286 with p5 =  0.07776 and the median is -0.0159448. This shows the slight skewness in lower values in r5's histogram. The sd of r5 is 0.1669239 which is close to 0.25. **
+
+**question 3**
+
+```{r}
+set.seed(02021968); series=arima.sim(n=36,list(ma=c(-0.7,0.5)))
+```
+
+**question 3a**
+```{r}
+theta1 = 0.7
+theta2=-0.5
+ACF=ARMAacf(ma=c(-theta1,-theta2),lag.max=10)
+plot(y=ACF[-1],x=1:10,xlab='Lag',ylab='ACF',type='h',ylim=c(-.6,.6))
+abline(h=0)
+```
+
+**question 3b**
+```{r}
+acf(series)
+```
+**We only get a match at lag 1 and lag 2, possibly becuas eof the small sample size**
+
+**question 3c**
+```{r}
+series2=arima.sim(n=1000,list(ma=c(-0.7,0.5)))
+pacf(series2,ci.col=NULL)
+```
+
+**question 3d**
+```{r}
+pacf(series2)
+```
+**given the small sample size the above graph looks like it matches the theoretical graph.**
+
+
+**question 4**
+
+```{r}
+set.seed(10262020); series=arima.sim(n=100,list(ar=0.8,ma=-0.4))
+```
+
+**question 4a**
+```{r}
+phi=0.8; theta=0.4; ACF=ARMAacf(ar=phi,ma=-theta,lag.max=20)
+plot(y=ACF[-1],x=1:20,xlab='Lag',ylab='ACF',type='h',ylim=c(-0.2,0.6))
+abline(h=0)
+```
+
+**question 4b**
+```{r}
+acf(series)
+```
+**this looks like the theoretical acf for the first 4 ish lags but then deviates from the theoretical lag.**
+
+**question 4c**
+```{r}
+eacf(series)
+```
+**This sample EACF looks like an ARMA(2,0).**
+
+**question 4d**
+```{r}
+set.seed(10282020); series=arima.sim(n=100,list(ar=0.8,ma=-0.4))
+acf(series)
+eacf(series)
+```
+
+**question 4e**
+```{r}
+set.seed(123456789); series=arima.sim(n=48,list(ar=0.8,ma=-0.4))
+acf(series)
+eacf(series)
+```
+
+**question 4f**
+```{r}
+set.seed(987654321); series=arima.sim(n=200,list(ar=0.8,ma=-0.4))
+acf(series)
+eacf(series)
+```

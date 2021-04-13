@@ -1,0 +1,63 @@
+---
+title: "State 349 Homework 3"
+author: "Madi Polley"
+date: "10/9/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Problem 2**
+
+
+``` {r}
+noise <- rnorm(5000)
+autocorrelation1 <- list();
+autocorrelation1 <- append(autocorrelation1,0)
+for (i in 2:4000){
+  autocorrelation1 <- append(autocorrelation1,autocorrelation1[[i-1]]*.5 + noise[i]);
+}
+autocorrelation1 <- unlist(autocorrelation1)
+plot(autocorrelation1, type="o")
+acf(autocorrelation1)
+```
+
+```{r}
+
+autocorrelation2 <- list();
+autocorrelation2 <- append(autocorrelation2,0)
+for (i in 2:4000){
+  autocorrelation2 <- append(autocorrelation2,autocorrelation2[[i-1]]*(-0.5) + noise[i]);
+}
+autocorrelation2 <- unlist(autocorrelation2)
+plot(autocorrelation2, type="o")
+acf(autocorrelation2)
+
+```
+
+
+```{r}
+autocorrelation3 <- list();
+autocorrelation3 <- append(autocorrelation3,0)
+for (i in 2:4000){
+  autocorrelation3 <- append(autocorrelation3,autocorrelation3[[i-1]]*(0.95) + noise[i]);
+}
+autocorrelation3 <- unlist(autocorrelation3)
+plot(autocorrelation3, type="o")
+acf(autocorrelation3)
+```
+
+
+```{r}
+autocorrelation4 <- list();
+autocorrelation4 <- append(autocorrelation4,0)
+for (i in 2:4000){
+  autocorrelation4 <- append(autocorrelation4,autocorrelation4[[i-1]]*(0.25) + noise[i]);
+}
+autocorrelation4 <- unlist(autocorrelation4)
+plot(autocorrelation4, type="o")
+acf(autocorrelation4)
+```
+

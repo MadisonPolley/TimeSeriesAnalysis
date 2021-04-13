@@ -1,0 +1,195 @@
+---
+title: "349 HW 2"
+author: "Madi Polley"
+date: "10/4/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(TSA)
+```
+
+**Problem 3**
+
+*a*
+```{r}
+data("beersales")
+plot(beersales)
+```
+
+The plot appears to be seasonal with a generally positive trend from 1975 through 1980, where it seems to become a more constant seasonal trend.
+
+*b*
+```{r}
+season = season(beersales)
+plot(beersales, type="n")
+points(y=beersales,x=time(beersales), pch=as.vector(season))
+```
+
+There is definitely some seasonality in this plot. It appears that May, June and July are typically much higher than November, December and January. There is still a slighly positive trend across the years for the seasons.
+
+*c*
+```{r}
+model = lm(beersales~season-1)
+summary(model)
+```
+
+It appears that all of the seasons are significant in the model. The estimates are higher in the months of May, June, July, and August and lower in November, December, January, and February. The Multiple R-squared is quite high, which means most of the data is accounted for with our model.
+
+*d*
+```{r}
+plot(y=rstandard(model),x=as.vector(time(beersales)),xlab='Time',
+ylab='Standardized Residuals',type='n')
+points(y=rstudent(model),x=as.vector(time(beersales)), pch=as.vector(season))
+```
+
+There is a clear trend in the residuals where the points start very negative but gradually move toward 0 as time goes on. There is no clear difference between any specific months as far as the residual trends go.
+
+
+*e*
+```{r}
+timetermbeer = lm(beersales ~ season + I(time(beersales)^2))
+summary(timetermbeer)
+```
+
+The multiple R-squared is quite high at 0.877, which means that most of the response variable is being explained by our explanatory variables in this model. This shows that it is a fairly good model.
+
+*f*
+```{r}
+plot(y=rstudent(timetermbeer),x=as.vector(time(beersales)),xlab='Time',
+ylab='Standardized Residuals',type='n')
+points(y=rstudent(timetermbeer),x=as.vector(time(beersales)), pch=as.vector(season))
+```
+
+The residuals from this model seem to still be following a trend. The residuals are largely negative in the earlier years, center around positive 1 in the early 80s, then center more around 0 as you get closer to the 90s. This model appears to still violate homoskedasticity.
+
+**Problem 4**
+
+*a*
+
+```{r}
+data("winnebago")
+
+plot(winnebago)
+```
+
+It appears that the winnebago sales are increasing exponentially over time with some seasonality.
+
+*b*
+
+```{r}
+
+season.winnebago = season(winnebago)
+
+model.winnebago = lm(winnebago~time(winnebago))
+summary(model.winnebago)
+plot(y=rstudent(model.winnebago),x=as.vector(time(winnebago)),xlab='Time',
+ylab='Standardized Residuals')
+```
+
+The multiple r-squared is 0.6915, which means over two thirds of our data can be accounted for using our explanatory variables. Our p-value is very low, which means our model is significant at the 0.05 level. Overall, this model is okay, but is still not accounting for over a third of our data.
+As far as the residual plot goes, there is a clear trend in the residuals as time goes on (the points fan out), which means that homoskedastisity is violated.
+
+*c*
+
+```{r}
+log.winnebago = log(winnebago)
+plot(log.winnebago)
+```
+
+The log plot shows a positive linear trend with apparent seasonality.
+
+*d*
+
+```{r}
+log.winnebago.model = lm(log.winnebago~time(log.winnebago))
+plot(y=rstudent(log.winnebago.model),x=as.vector(time(winnebago)),xlab='Time',
+ylab='Standardized Residuals')
+```
+
+The residuals seem evenly distributed around 0 besides one potential outlier at 1970. This makes it seem like our model is fairly appropriate for the data as homoskedastisity is not violated.
+
+*e*
+
+```{r}
+month.winnebago = season(winnebago)
+log.time.winnebago = lm(log.winnebago~month.winnebago+time(log.winnebago))
+summary(log.time.winnebago)
+```
+
+The multiple r-squared is 0.8946, which means we can account for about 89.46% of the variability in the response variable with our explanatory variables, making this a pretty good model. Our p-value is also quite low, making this a significant model.
+
+*f*
+
+```{r}
+plot(y=rstudent(log.time.winnebago), x=as.vector(time(winnebago)))
+```
+
+The residuals of this model seem to almost follow a sine curve, meaning that homoskedasticity is likely violated by this model.
+
+**Problem 5**
+
+*a*
+
+```{r}
+beer.resids = timetermbeer$residuals
+```
+
+*b*
+
+```{r}
+runs(beer.resids)
+```
+
+With a p-value of 4.32e-06, we reject the null hypothesis. There is significant evidence suggesting that these values are not independent of one another.
+
+*c*
+
+```{r}
+acf(rstudent(timetermbeer))
+```
+
+The autocorrelation appears to show that the observations are not independent from eachother since the observations go outside of the blue dashed lines.
+
+*d*
+
+```{r}
+qqnorm(rstudent(timetermbeer))
+hist(rstudent(timetermbeer), xlab="Standardized Residuals")
+```
+
+Since the QQ plot has light ends and the histogram is quite skewed, which means the data is not normal and is likely skewed.
+
+**Problem 6**
+
+*a*
+
+```{r}
+winn.resids = log.time.winnebago$residuals
+```
+
+*b*
+
+```{r}
+runs(winn.resids)
+```
+
+With a p-value of 0.000243, we reject the null hypothesis. There is significant evidence that the observations are not independent of one another.
+
+*c*
+
+```{r}
+acf(rstudent(log.time.winnebago))
+```
+
+The autocorrelation appears to show that the observations are not independent from eachother since the observations go outside of the blue dashed lines.
+
+*d*
+
+```{r}
+qqnorm(rstudent(log.time.winnebago))
+hist(rstudent(log.time.winnebago), xlab="Standardized Residuals")
+```
+
+The QQ plot is very light on the ends and the histogram is slightly skewed. This points to the data not being normal.

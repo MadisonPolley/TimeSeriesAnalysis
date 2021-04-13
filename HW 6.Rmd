@@ -1,0 +1,90 @@
+---
+title: "349 Homework 6"
+author: "Madi Polley"
+date: "11/9/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(TSA)
+```
+
+**3a**
+
+```{r}
+series = arima.sim(n=30, list(ar = 0.5))
+model1 = arima(series, order = c(1,0,0))
+plot(rstandard(model1), ylab="Standardized Residuals", type = "o")
+abline(h=0)
+```
+
+**Yes it supports AR(1). There are no obvious patterns in the residuals.**
+
+**3b**
+
+```{r}
+qqnorm(residuals(model1))
+qqline(residuals(model1))
+```
+
+**The QQ plot curls at the tails which means that the model is not normal.**
+
+**3c**
+
+```{r}
+acf(residuals(model1))
+```
+
+**None of the lags surpass the dotted line, therefore the AR(1) is supported.**
+
+**3d**
+
+```{r}
+LB.test(model1, lag = 8)
+```
+
+**The p-value is not significant for the first 8 autocorrelations, so we won't reject the randomness of the errors.**
+
+**4a**
+
+```{r}
+data(hare)
+model2 = arima(sqrt(hare), order = c(3,0,0))
+acf(rstandard(model2))
+```
+
+**None of the lags are significant.**
+
+**4b**
+
+```{r}
+LB.test(model2, lag = 9)
+```
+
+**The p-value is not significant for the first 9 autocorrelations of the residuals, which means we won't reject the randomness of the errors.**
+
+**4c**
+
+```{r}
+runs(rstandard(model2))
+```
+
+**The number of runs isn't surprising. The p-value is also not significant so we fail to reject the independence of the error terms.**
+
+**4d**
+
+```{r}
+qqnorm(residuals(model2))
+qqline(residuals(model2))
+```
+
+**Since the tails are pretty far from the line, this is not normal.**
+
+**4e**
+
+```{r}
+shapiro.test(residuals(model2))
+```
+
+**Since the p-value is not significant, we fail to reject the normality of the errors.**
